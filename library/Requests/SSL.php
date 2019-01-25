@@ -27,9 +27,10 @@ class Requests_SSL {
 	 * @throws Requests_Exception On not obtaining a match for the host (`fsockopen.ssl.no_match`)
 	 * @param string $host Host name to verify against
 	 * @param array $cert Certificate data from openssl_x509_parse()
+	 * @param boolean $only_common_name Check $host against Common name ONLY.
 	 * @return bool
 	 */
-	public static function verify_certificate($host, $cert) {
+	public static function verify_certificate($host, $cert, $only_common_name = false) {
 		// Calculate the valid wildcard match if the host is not an IP address
 		$parts = explode('.', $host);
 		if (ip2long($host) === false) {
@@ -40,7 +41,7 @@ class Requests_SSL {
 		$has_dns_alt = false;
 
 		// Check the subjectAltName
-		if (!empty($cert['extensions']) && !empty($cert['extensions']['subjectAltName'])) {
+		if (!$only_common_name && !empty($cert['extensions']) && !empty($cert['extensions']['subjectAltName'])) {
 			$altnames = explode(',', $cert['extensions']['subjectAltName']);
 			foreach ($altnames as $altname) {
 				$altname = trim($altname);

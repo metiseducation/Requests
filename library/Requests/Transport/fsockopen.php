@@ -101,6 +101,8 @@ class Requests_Transport_fsockopen implements Requests_Transport {
 			if (isset($options['verifyname']) && $options['verifyname'] === false) {
 				$context_options['verify_peer_name'] = false;
 				$verifyname = false;
+			} else if (isset($options['verifyname']) && is_string($options['verifyname'])) {
+				$verifyname = $options['verifyname'];
 			}
 
 			stream_context_set_option($context, array('ssl' => $context_options));
@@ -124,7 +126,10 @@ class Requests_Transport_fsockopen implements Requests_Transport {
 
 		restore_error_handler();
 
-		if ($verifyname && !$this->verify_certificate_from_context($host, $context)) {
+		if ($verifyname && is_string($verifyname) && !$this->verify_certificate_from_context($verifyname, $context, true)) {
+			throw new Requests_Exception('SSL certificate did not match the requested "Common name"', 'ssl.no_match');
+		}
+		if ($verifyname && !is_string($verifyname) && !$this->verify_certificate_from_context($host, $context)) {
 			throw new Requests_Exception('SSL certificate did not match the requested domain name', 'ssl.no_match');
 		}
 
@@ -400,9 +405,10 @@ class Requests_Transport_fsockopen implements Requests_Transport {
 	 * @throws Requests_Exception On not obtaining a match for the host (`fsockopen.ssl.no_match`)
 	 * @param string $host Host name to verify against
 	 * @param resource $context Stream context
+	 * @param boolean $only_common_name Only match $host against 'Common name' field?
 	 * @return bool
 	 */
-	public function verify_certificate_from_context($host, $context) {
+	public function verify_certificate_from_context($host, $context, $only_common_name = false) {
 		$meta = stream_context_get_options($context);
 
 		// If we don't have SSL options, then we couldn't make the connection at
@@ -413,7 +419,7 @@ class Requests_Transport_fsockopen implements Requests_Transport {
 
 		$cert = openssl_x509_parse($meta['ssl']['peer_certificate']);
 
-		return Requests_SSL::verify_certificate($host, $cert);
+		return Requests_SSL::verify_certificate($host, $cert, $only_common_name);
 	}
 
 	/**
