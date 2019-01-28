@@ -343,6 +343,12 @@ class Requests {
 	 *		If value is a string, Common name must match the string instead of hostname.
 	 *    String only works if transport is fsock, because libcurl does not support this.
 	 *    (string|boolean: default, true)
+	 * - 'certificate': Path to client certificate file. (requires 'key' to also be present)
+	 *		(string|boolean, default: false)
+	 * - 'key': Path to client certificate key file.
+	 *		(string|boolean, default: false)
+	 * - 'passphrase': Password for client certificate key file.
+	 * 		(string|boolean, default: false)
 	 * - `data_format`: How should we send the `$data` parameter?
 	 *    (string, one of 'query' or 'body', default: 'query' for
 	 *    HEAD/GET/DELETE, 'body' for POST/PUT/OPTIONS/PATCH)

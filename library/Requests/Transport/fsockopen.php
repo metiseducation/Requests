@@ -105,6 +105,20 @@ class Requests_Transport_fsockopen implements Requests_Transport {
 				$verifyname = $options['verifyname'];
 			}
 
+			if (isset($options['certificate']) && $options['certificate']) {
+				$context_options['local_cert'] = $options['certificate'];
+
+				if (!isset($options['key']) || !$options['key']) {
+					throw new Requests_Exception('\'key\' parameter is missing or not valid', 'ssl.missing_key');
+				}
+
+				$context_options['local_pk'] = $options['key'];
+
+				if (isset($options['passphrase']) && $options['passphrase']) {
+					$context_options['passphrase'] = $options['passphrase'];
+				}
+			}
+
 			stream_context_set_option($context, array('ssl' => $context_options));
 		}
 		else {

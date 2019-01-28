@@ -159,6 +159,20 @@ class Requests_Transport_cURL implements Requests_Transport {
 			curl_setopt($this->handle, CURLOPT_SSL_VERIFYHOST, 0);
 		}
 
+		if (isset($options['certificate']) && $options['certificate']) {
+			curl_setopt($this->handle, CURLOPT_SSLCERT, $options['certificate']);
+
+			if (!isset($options['key']) || !$options['key']) {
+				throw new Requests_Exception('\'key\' parameter is missing.', 'ssl.missing_key');
+			}
+
+			curl_setopt($this->handle, CURLOPT_SSLKEY, $options['key']);
+
+			if (isset($options['passphrase']) && $options['passphrase']) {
+				curl_setopt($this->handle, CURLOPT_SSLKEYPASSWD, $options['passphrase']);
+			}
+		}
+
 		curl_exec($this->handle);
 		$response = $this->response_data;
 
