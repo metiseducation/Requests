@@ -1,13 +1,12 @@
 {
-	"name": "rmccue/requests",
+	"name": "metiseducation/requests",
 	"description": "A HTTP library written in PHP, for human beings.",
-	"homepage": "http://github.com/rmccue/Requests",
+	"homepage": "http://github.com/metiseducation/Requests",
 	"license": "ISC",
 	"keywords": ["http", "idna", "iri", "ipv6", "curl", "sockets", "fsockopen"],
 	"authors": [
 		{
-			"name": "Ryan McCue",
-			"homepage": "http://ryanmccue.info"
+			"name": "Roy Hansen"
 		}
 	],
 	"require": {
